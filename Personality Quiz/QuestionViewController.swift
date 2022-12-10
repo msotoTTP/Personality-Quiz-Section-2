@@ -9,9 +9,25 @@ import UIKit
 
 class QuestionViewController: UIViewController {
     
+    @IBOutlet weak var questionLabel: UILabel!
+    
     @IBOutlet weak var singleStackView: UIStackView!
+    @IBOutlet weak var singleButton1: UIButton!
+    @IBOutlet weak var singleButton2: UIButton!
+    @IBOutlet weak var singleButton3: UIButton!
+    @IBOutlet weak var singleButton4: UIButton!
+    
     @IBOutlet weak var multipleStackView: UIStackView!
+    @IBOutlet weak var multiLabel1: UILabel!
+    @IBOutlet weak var multiLabel2: UILabel!
+    @IBOutlet weak var multiLabel3: UILabel!
+    @IBOutlet weak var multiLabel4: UILabel!
+    
     @IBOutlet weak var rangedStackView: UIStackView!
+    @IBOutlet weak var rangedLabel1: UILabel!
+    @IBOutlet weak var rangedLabel2: UILabel!
+    
+    @IBOutlet weak var questionProgressView: UIProgressView!
     
     var questions: [Question] = [
         Question(
@@ -47,13 +63,35 @@ class QuestionViewController: UIViewController {
             ]
         )
     ]
-    var questionIndex = 0
+    var questionIndex = 2
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         updateUI()
+    }
+    
+    func updateSingleStack(using answers: [Answer]) {
+        singleStackView.isHidden = false
+        singleButton1.setTitle(answers[0].text, for: .normal)
+        singleButton2.setTitle(answers[1].text, for: .normal)
+        singleButton3.setTitle(answers[2].text, for: .normal)
+        singleButton4.setTitle(answers[3].text, for: .normal)
+    }
+    
+    func updateMultipleStack(using answers: [Answer]) {
+        multipleStackView.isHidden = false
+        multiLabel1.text = answers[0].text
+        multiLabel2.text = answers[1].text
+        multiLabel3.text = answers[2].text
+        multiLabel4.text = answers[3].text
+    }
+    
+    func updateRangedStack(using answers: [Answer]) {
+        rangedStackView.isHidden = false
+        rangedLabel1.text = answers.first?.text
+        rangedLabel2.text = answers.last?.text
     }
     
     func updateUI() {
@@ -63,14 +101,25 @@ class QuestionViewController: UIViewController {
         multipleStackView.isHidden = true
         rangedStackView.isHidden = true
         
+        let currentAnswers = question.answers
+        
         switch question.type {
         case .single:
-            singleStackView.isHidden = false
+            updateSingleStack(using: currentAnswers)
         case .multiple:
-            multipleStackView.isHidden = false
+            updateMultipleStack(using: currentAnswers)
         case .ranged:
-            rangedStackView.isHidden = false
+            updateRangedStack(using: currentAnswers)
         }
+        
+        //display question text
+        questionLabel.text = question.text
+        
+        //set title of screen
+        navigationItem.title = "Question #\(questionIndex + 1)"
+        
+        //set progress
+        questionProgressView.progress = Float(questionIndex) / Float(questions.count)
     }
     
 
