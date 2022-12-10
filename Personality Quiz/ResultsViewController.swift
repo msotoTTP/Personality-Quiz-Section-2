@@ -8,11 +8,14 @@
 import UIKit
 
 class ResultsViewController: UIViewController {
+    
+    var responses: [Answer] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
+        print(responses)
     }
     
 

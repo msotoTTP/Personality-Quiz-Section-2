@@ -22,10 +22,15 @@ class QuestionViewController: UIViewController {
     @IBOutlet weak var multiLabel2: UILabel!
     @IBOutlet weak var multiLabel3: UILabel!
     @IBOutlet weak var multiLabel4: UILabel!
+    @IBOutlet weak var multiSwitch1: UISwitch!
+    @IBOutlet weak var multiSwitch2: UISwitch!
+    @IBOutlet weak var multiSwitch3: UISwitch!
+    @IBOutlet weak var multiSwitch4: UISwitch!
     
     @IBOutlet weak var rangedStackView: UIStackView!
     @IBOutlet weak var rangedLabel1: UILabel!
     @IBOutlet weak var rangedLabel2: UILabel!
+    @IBOutlet weak var rangedSlider: UISlider!
     
     @IBOutlet weak var questionProgressView: UIProgressView!
     
@@ -63,7 +68,8 @@ class QuestionViewController: UIViewController {
             ]
         )
     ]
-    var questionIndex = 2
+    var questionIndex = 0
+    var answersChosen: [Answer] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -122,7 +128,78 @@ class QuestionViewController: UIViewController {
         questionProgressView.progress = Float(questionIndex) / Float(questions.count)
     }
     
-
+    func nextQuestion() {
+        questionIndex += 1
+        
+        if questionIndex < questions.count {
+            updateUI()
+        } else {
+            performSegue(withIdentifier: "Results", sender: nil)
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let destinationVC = segue.destination as? ResultsViewController {
+            destinationVC.responses = answersChosen
+        }
+    }
+    
+    @IBAction func singleAnswerButtonPressed(_ sender: UIButton) {
+        let answers = questions[questionIndex].answers
+        
+        switch sender {
+        case singleButton1:
+            answersChosen.append(answers[0])
+        case singleButton2:
+            answersChosen.append(answers[1])
+        case singleButton3:
+            answersChosen.append(answers[2])
+        case singleButton4:
+            answersChosen.append(answers[3])
+        default:
+            break
+        }
+        
+        nextQuestion()
+    }
+    
+    @IBAction func multipleAnswerButtonPressed(_ sender: Any) {
+        let answers = questions[questionIndex].answers
+        
+        if multiSwitch1.isOn {
+            answersChosen.append(answers[0])
+        }
+        if multiSwitch2.isOn {
+            answersChosen.append(answers[1])
+        }
+        if multiSwitch3.isOn {
+            answersChosen.append(answers[2])
+        }
+        if multiSwitch4.isOn {
+            answersChosen.append(answers[3])
+        }
+        
+        nextQuestion()
+    }
+    
+    @IBAction func rangedAnswerButtonPressed(_ sender: Any) {
+        //first quarter, 0 to 0.25: first answer
+        //second quarter, 0.25 to 0.5: second answer
+        //third quarter, 0.5 to 0.75: third answer
+        //fourth quarter, 0.75 to 1: fourth answer
+        let answers = questions[questionIndex].answers
+        
+        //value of slider [0,1] -> 0, 1, 2, 3
+        var index = Int(rangedSlider.value * Float(answers.count))
+        if index == answers.count {
+            index -= 1
+        }
+        answersChosen.append(answers[index])
+        
+        nextQuestion()
+    }
+    
+    
     /*
     // MARK: - Navigation
 
